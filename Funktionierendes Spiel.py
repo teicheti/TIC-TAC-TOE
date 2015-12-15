@@ -18,11 +18,7 @@ class SPIELFELD:
         self.spielfeld = Canvas (fenster, width = 300, height = 350)
         self.spielfeld.pack ()  #Canvas Größe festlegen (Bezug auf fenster)
         
-        senkrechte = self.spielfeld.create_line (100,0,100,300, width = 3)  
-        senkrechte = self.spielfeld.create_line (200,0,200,300, width = 3)  
-        waagerrechte = self.spielfeld.create_line (0,100,300,100, width = 3)
-        waagerrechte = self.spielfeld.create_line (0,200,300,200, width = 3)
-        #Spielfeld Linien zeichnen + Zahlen: Anfang_x, Anfang_y, Ende_x, Ende_y
+        self.neustart()
         
     def markieren_x (self, x1, y1, x2, y2):
         X = self.spielfeld.create_line (x1, y1, x2, y2, width = 3, fill = "red")  # (Anfang: x,y ; Ende: x,y)
@@ -39,6 +35,7 @@ class SPIELFELD:
         senkrechte = self.spielfeld.create_line (200,0,200,300, width = 3)  
         waagerrechte = self.spielfeld.create_line (0,100,300,100, width = 3)
         waagerrechte = self.spielfeld.create_line (0,200,300,200, width = 3)
+        #Spielfeld Linien zeichnen + Zahlen: Anfang_x, Anfang_y, Ende_x, Ende_y
         
 class SPIELEN:
     def __init__ (self, Knopf, Nummer, Breite, Höhe, Position_x, Position_y, X1, Y1, X2, Y2):
@@ -116,15 +113,14 @@ class SPIELEN:
         elif (self == Neustart):    #Spiel neustaten
             Felder = [Feld_1, Feld_2, Feld_3, Feld_4, Feld_5, Feld_6, Feld_7, Feld_8, Feld_9]
             for i in Felder:
-                i.knopf.lift ()
-            #self.ausgang.destroy ()
+                i.knopf.lift () #Knöpfe sichtbar machen
             SPIELFELD.neustart ()
             if (SPIELFELD.beendet == 1):
-                SPIELEN.ausgang.destroy ()
-            SPIELFELD.beendet = 0
-            SPIELFELD.sieger = 0
-            SPIELFELD.spieler = "x"
-            SPIELFELD.gewinner = ["","","","","","","","",""]
+                SPIELEN.ausgang.destroy ()  #Label hat gewonnen, etc. verschwindet
+            SPIELFELD.beendet = 0   #noch keiner gewonnen = Kein Label
+            SPIELFELD.sieger = 0    #Sieger zurücksetzten = gibt kein Sieger
+            SPIELFELD.spieler = "x" #Wieder mit x beginne
+            SPIELFELD.gewinner = ["","","","","","","","",""]   #Gewinncode zurücksetzten
            
                         
         elif (self == Beenden): #Spiel beenden
@@ -133,6 +129,7 @@ class SPIELEN:
    
 fenster = Tk () #Fenster erzeugen
 fenster.title ("Tic-Tac-Toe")   #Name Fenster
+fenster.geometry ("335x385+250+250")
           
 fenster = ttk.Frame(fenster, borderwidth = 10, padding = "5")
 fenster.grid () #Größe des Fensters festlegen

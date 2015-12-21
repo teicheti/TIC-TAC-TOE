@@ -7,16 +7,16 @@ from tkinter import ttk
 class SPIELFELD:
     def __init__ (self):
 
-        self.spieler = "x"
+        self.spieler = "x"  #Für Spielerwechsel festlegen
 
-        self.beendet = 0
+        self.beendet = 0    #Kein klicken mehr (Felder) nach Beenden der Runde
         
         self.gewinner = ["","","","","","","","",""]    #Gewinner Liste erstellen
 
         self.spielfeld = Canvas (fenster, width = 300, height = 350)
         self.spielfeld.pack ()  #Canvas Größe festlegen (Bezug auf fenster)
         
-        self.neustart()
+        self.neustart() #Spielfeld erzeugen
         
     def markieren_x (self, x1, y1, x2, y2):
         X = self.spielfeld.create_line (x1, y1, x2, y2, width = 3, fill = "red")  # (Anfang: x,y ; Ende: x,y)
@@ -28,17 +28,18 @@ class SPIELFELD:
         # Kreis zeichnen
         
     def neustart (self):
-        self.spielfeld.delete (ALL)
+        self.spielfeld.delete (ALL) #Spielfeld räumen
         senkrechte = self.spielfeld.create_line (100,0,100,300, width = 3)  
         senkrechte = self.spielfeld.create_line (200,0,200,300, width = 3)  
         waagerrechte = self.spielfeld.create_line (0,100,300,100, width = 3)
         waagerrechte = self.spielfeld.create_line (0,200,300,200, width = 3)
         #Spielfeld Linien zeichnen + Zahlen: Anfang_x, Anfang_y, Ende_x, Ende_y
-        
+
+#---------------------------------------------------------------------     
 class SPIELEN:
     def __init__ (self, Knopf, Nummer, Breite, Höhe, Position_x, Position_y, X1, Y1, X2, Y2):
         
-        self.nummer = Nummer
+        self.nummer = Nummer    #Für Eintragung in SPIELFELD.gewinner
         self.width = Breite
         self.height = Höhe
         self.position_x = Position_x    #Position Button x
@@ -54,6 +55,7 @@ class SPIELEN:
         #Button erzeugen (Verweis auf befehl) und Platzieren   
 
     def gewinncode (self):
+
         if (SPIELFELD.gewinner [0] == SPIELFELD.gewinner [1] == SPIELFELD.gewinner [2] != "" or
             SPIELFELD.gewinner [3] == SPIELFELD.gewinner [4] == SPIELFELD.gewinner [5] != "" or
             SPIELFELD.gewinner [6] == SPIELFELD.gewinner [7] == SPIELFELD.gewinner [8] != "" or
@@ -64,7 +66,7 @@ class SPIELEN:
             SPIELFELD.gewinner [6] == SPIELFELD.gewinner [4] == SPIELFELD.gewinner [2] != ""):
             #Gewinnmöglichkeiten
             
-            SPIELFELD.beendet = 1
+            SPIELFELD.beendet = 1   #Kein klicken auf die Felder mehr
 
         elif (SPIELFELD.gewinner [0] and SPIELFELD.gewinner [1] and SPIELFELD.gewinner [2] and SPIELFELD.gewinner [3]
             and SPIELFELD.gewinner [4] and SPIELFELD.gewinner [5] and SPIELFELD.gewinner [6]
@@ -74,63 +76,84 @@ class SPIELEN:
             SPIELEN.ausgang = Label (fenster, text = "UNENTSCHIEDEN", fg = "grey", font = "Times 15")
             SPIELEN.ausgang.place (x = 60, y = 340)
             #Unentschieden festlegen
+
+#---------------------------------------------------------------------
             
     def befehl(self):   #Befehle
         if (self != Beenden and self != Neustart and SPIELFELD.beendet == 0):
-
             if (SPIELFELD.spieler == "x"):
                 SPIELFELD.markieren_x (self.x1, self.y1, self.x2, self.y2)
                 SPIELFELD.spieler = "o"
                 SPIELFELD.gewinner [self.nummer] = "x"
                 #Auf Kreuz verweisen + Spielerwechsel + Nummer für Gewinncode
 
-                self.gewinncode ()
+                self.gewinncode ()  #Gewinn überprüfen
 
                 if (SPIELFELD.beendet == 1):
                     SPIELEN.ausgang = Label (fenster, text = "X HAT GEWONNEN", fg = "red", font = "Times 15")
                     SPIELEN.ausgang.place (x = 50, y = 340)
                     #Label für Gewinner
-                
+
+  #---------------------------------------------------------------------
+                    
             elif (SPIELFELD.spieler == "o"):
                 SPIELFELD.markieren_o (self.x1, self.y1, self.x2, self.y2)
                 SPIELFELD.spieler = "x"
                 SPIELFELD.gewinner [self.nummer] = "o"
                 #Auf Kreis verweisen + Spielerwechsel + Nummer für Gewinncode
 
-                self.gewinncode ()
-
+                self.gewinncode ()  #Gewinn überprüfen
+                
                 if (SPIELFELD.beendet == 1):
                     SPIELEN.ausgang = Label (fenster, text = "O HAT GEWONNEN", fg = "blue", font = "Times 15")
                     SPIELEN.ausgang.place (x = 50, y = 340)
                     #Label für Gewinner
-
+                    
             self.knopf.lower () #Knöpfe nach anklicken verstecken
 
+#---------------------------------------------------------------------
             
         elif (self == Neustart):    #Spiel neustaten
-            Felder = [Feld_1, Feld_2, Feld_3, Feld_4, Feld_5, Feld_6, Feld_7, Feld_8, Feld_9]
+            Felder = [Feld_1, Feld_2, Feld_3, Feld_4, Feld_5, Feld_6, Feld_7, Feld_8, Feld_9] #Liste der Knöpfe
             for i in Felder:
                 i.knopf.lift () #Knöpfe sichtbar machen
             SPIELFELD.neustart ()
             if (SPIELFELD.beendet == 1 or SPIELFELD.beendet == 2):
-                SPIELEN.ausgang.destroy ()  #Label hat gewonnen, etc. verschwindet
+                SPIELEN.ausgang.destroy ()  #Label "... HAT GEWONNEN", etc. verschwindet
             SPIELFELD.beendet = 0
-            SPIELFELD.spieler = "x" #Wieder mit x beginne
+            SPIELFELD.spieler = "x" #Wieder mit x beginnen
             SPIELFELD.gewinner = ["","","","","","","","",""]   #Gewinncode zurücksetzten
-           
-                        
+             
         elif (self == Beenden): #Spiel beenden
             os._exit(1)
 
-   
+#---------------------------------------------------------------------
+
+def anleitung ():
+    anfang = Tk ()  #Neues Fenster erstellen
+    anfang.title ("Anleitung TIC-TAC-TOE")
+    anfang.geometry ("400x200+217+275") #Größe und Tiltel
+
+    beschreibung = Label (anfang, text = "Dies ist ein normeles TIC-TAC-TOE Spiel.\n Dabei geht es darum, als erster Drei Symbole in einer\n Reihe zu haben. Es gibt dabei drei Möglichkeiten:\n\n 1: waagerrecht\n\n 2: senkrecht\n\n 3: diagolal")
+    beschreibung.pack ()    #Beschreibung des Spiels
+
+    schließen = Button (anfang, text = "Schließen", command = anfang.destroy) #Zurück zum Spiel
+    schließen.pack (side = TOP)
+
+    anfang.mainloop ()  #Hauptschleife Fenster
+
+#---------------------------------------------------------------------
+    
 fenster = Tk () #Fenster erzeugen
 fenster.title ("Tic-Tac-Toe")   #Name Fenster
-fenster.geometry ("335x385+250+250")    #Position Fenster festlegen
+fenster.geometry ("335x385+250+250")
           
 fenster = ttk.Frame(fenster, borderwidth = 10, padding = "5")
 fenster.grid () #Größe des Fensters festlegen
 
-SPIELFELD = SPIELFELD ()    #Spielfeld aufrufen    #Fenster definieren
+SPIELFELD = SPIELFELD ()    #Spielfeld aufrufen    #Fenster definieren   
+
+#Erstellen der Felder (Buttons)
 
 Feld_1 = SPIELEN ("Feld 1", 0, 96,96,3,2, 10,10,90,90)
 Feld_2 = SPIELEN ("Feld 2", 1, 96,96,103,2, 110,10,190,90)
@@ -147,6 +170,12 @@ Feld_9 = SPIELEN ("Feld 9", 8, 96,96,203,202, 210,210,290,290)
 Neustart = SPIELEN ("Neustart", 9, 75,25,15,310, 0,0,0,0)   #Neustart Button
 Beenden = SPIELEN ("Beenden", 10, 75,25,210,310, 0,0,0,0)   #Beenden Button
 
-fenster.mainloop () #Hauptschleife
+Anleitung = Button (fenster, text = "Anleitung", command = anleitung) #Button zum aufrufen der Anleitung 
+Anleitung.place (x = 112, y = 310, width = 75, height = 25)             #(Neues Fenster öffnen)
 
-os._exit (1)
+    
+fenster.mainloop () #Hauptschleife für Fenster
+
+#---------------------------------------------------------------------
+
+os._exit (1)    #Programm komplett beenden (keine Eingaben mehr)

@@ -205,6 +205,7 @@ class SPIELEN:
             
         SPIELFELD.gewinner = ["","","","","","","","",""]   #Gewinncode zurücksetzten
 
+        global beginner
         beginner = random.randint (1, 2)
         if (SPIELFELD.modus == 1 and beginner == 1):
             SPIELFELD.markieren_x (Feld_1.x1, Feld_1.y1, Feld_1.x2, Feld_1.y2)
@@ -232,7 +233,9 @@ class SPIELEN:
         elif (self == Mehrspieler):
             if (SPIELFELD.modus == 1):
                 SPIELFELD.modus = 2
+                SPIELFELD.spieler = "x"
                 self.neustart ()
+                
             
 #---------------------------------------------------------------------
 
@@ -240,47 +243,45 @@ class SPIELEN:
 
             if (SPIELFELD.spieler == "x" and SPIELFELD.modus == 2):
                 SPIELFELD.markieren_x (self.x1, self.y1, self.x2, self.y2)
-                SPIELFELD.spieler = "o"
                 SPIELFELD.gewinner [self.nummer] = "x"
+                self.gewinncode (SPIELFELD.gewinner)
+                SPIELFELD.spieler = "o"
+                if (SPIELFELD.beendet == 1):
+                    SPIELFELD.spieler = "x"
                 #Auf Kreuz verweisen + Spielerwechsel + Nummer für Gewinncode
                 
-                self.gewinncode (SPIELFELD.gewinner)
+                
                                     
-                if (SPIELFELD.beendet == 1):
-                    SPIELEN.ausgang = Label (fenster, text = "X HAT GEWONNEN", fg = "red", font = "Times 15")
-                    SPIELEN.ausgang.place (x = 50, y = 375)
-                    #Label für Gewinner
-
 #---------------------------------------------------------------------
                     
             elif (SPIELFELD.spieler == "o"):
                 SPIELFELD.markieren_o (self.x1, self.y1, self.x2, self.y2)
-                SPIELFELD.spieler = "x"
                 SPIELFELD.gewinner [self.nummer] = "o"
-                wahl = self.nummer
-                #Auf Kreis verweisen + Spielerwechsel + Nummer für Gewinncode
-
                 self.gewinncode (SPIELFELD.gewinner)
-
+                SPIELFELD.spieler = "x"
+                if (SPIELFELD.beendet == 1):
+                    SPIELFELD.spieler = "o"
+                #Auf Kreis verweisen + Spielerwechsel + Nummer für Gewinncode    
            
-                if (SPIELFELD.modus == 1):
+                if (SPIELFELD.modus == 1 and SPIELFELD.beendet == 0):
                     self.computer ()      
-                    SPIELFELD.spieler = "o" #Anderer Spieler
                     SPIELFELD.test = 0  
                     self.gewinncode (SPIELFELD.gewinner)    #Überprüfen ob gewonnen
-                    
-                    
-                if (SPIELFELD.beendet == 1):
-                    if (SPIELFELD.modus == 1):
-                        SPIELEN.ausgang = Label (fenster, text = "X HAT GEWONNEN", fg = "red", font = "Times 15")
-                    else:
-                        SPIELEN.ausgang = Label (fenster, text = "O HAT GEWONNEN", fg = "blue", font = "Times 15")
-                    SPIELEN.ausgang.place (x = 50, y = 375)
-                    #Label für Gewinner
+                    if (SPIELFELD.beendet != 1 and SPIELFELD.beendet != 2):
+                        SPIELFELD.spieler = "o" #Anderer Spieler     
                     
             self.knopf.lower () #Knöpfe nach anklicken verstecken
 
-            if (SPIELFELD.beendet == 2):
+            if (SPIELFELD.beendet == 1):
+                if (SPIELFELD.spieler == "x"):
+                    SPIELEN.ausgang = Label (fenster, text = "X HAT GEWONNEN", fg = "red", font = "Times 15")
+                    SPIELEN.ausgang.place (x = 50, y = 375)
+                elif (SPIELFELD.spieler == "o"):
+                    SPIELEN.ausgang = Label (fenster, text = "O HAT GEWONNEN", fg = "blue", font = "Times 15")
+                    SPIELEN.ausgang.place (x = 50, y = 375)
+                #Label für Gewinner
+
+            elif (SPIELFELD.beendet == 2):
                 SPIELEN.ausgang = Label (fenster, text = "UNENTSCHIEDEN", fg = "grey", font = "Times 15")
                 SPIELEN.ausgang.place (x = 60, y = 375)
                 #Unentschieden festlegen

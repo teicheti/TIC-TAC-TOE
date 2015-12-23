@@ -16,7 +16,7 @@ class SPIELFELD:
         self.spielfeld = Canvas (fenster, width = 300, height = 350)
         self.spielfeld.pack ()  #Canvas Größe festlegen (Bezug auf fenster)
         
-        #self.neustart()
+        self.neustart()
         
     def markieren_x (self, x1, y1, x2, y2):
         X = self.spielfeld.create_line (x1, y1, x2, y2, width = 3, fill = "red")  # (Anfang: x,y ; Ende: x,y)
@@ -54,22 +54,22 @@ class SPIELEN:
         self.knopf.place (x = self.position_x, y = self.position_y, width = self.width, height = self.height)
         #Button erzeugen (Verweis auf befehl) und Platzieren   
 
-    def gewinncode (self):
-        if (SPIELFELD.gewinner [0] == SPIELFELD.gewinner [1] == SPIELFELD.gewinner [2] != "" or
-            SPIELFELD.gewinner [3] == SPIELFELD.gewinner [4] == SPIELFELD.gewinner [5] != "" or
-            SPIELFELD.gewinner [6] == SPIELFELD.gewinner [7] == SPIELFELD.gewinner [8] != "" or
-            SPIELFELD.gewinner [0] == SPIELFELD.gewinner [3] == SPIELFELD.gewinner [6] != "" or
-            SPIELFELD.gewinner [1] == SPIELFELD.gewinner [4] == SPIELFELD.gewinner [7] != "" or
-            SPIELFELD.gewinner [2] == SPIELFELD.gewinner [5] == SPIELFELD.gewinner [8] != "" or
-            SPIELFELD.gewinner [0] == SPIELFELD.gewinner [4] == SPIELFELD.gewinner [8] != "" or
-            SPIELFELD.gewinner [6] == SPIELFELD.gewinner [4] == SPIELFELD.gewinner [2] != ""):
+    def gewinncode (self, gewinner):
+        if (gewinner [0] == gewinner [1] == gewinner [2] != "" or   #waagerecht oben
+            gewinner [3] == gewinner [4] == gewinner [5] != "" or   #waagerecht mitte
+            gewinner [6] == gewinner [7] == gewinner [8] != "" or   #waagerecht unten
+            gewinner [0] == gewinner [3] == gewinner [6] != "" or   #senkrecht links
+            gewinner [1] == gewinner [4] == gewinner [7] != "" or   #senkrecht mitte
+            gewinner [2] == gewinner [5] == gewinner [8] != "" or   #senkrecht rechts
+            gewinner [0] == gewinner [4] == gewinner [8] != "" or   #diagonal oben unten
+            gewinner [6] == gewinner [4] == gewinner [2] != ""):    #diagonal unten oben
             #Gewinnmöglichkeiten
-            
+
             SPIELFELD.beendet = 1
 
-        elif (SPIELFELD.gewinner [0] and SPIELFELD.gewinner [1] and SPIELFELD.gewinner [2] and SPIELFELD.gewinner [3]
-            and SPIELFELD.gewinner [4] and SPIELFELD.gewinner [5] and SPIELFELD.gewinner [6]
-            and SPIELFELD.gewinner [7] and SPIELFELD.gewinner [8] != ""):
+        elif (gewinner [0] and gewinner [1] and gewinner [2]
+              and gewinner [3] and gewinner [4] and gewinner [5]
+              and gewinner [6] and gewinner [7] and gewinner [8] != ""):
 
             SPIELFELD.beendet = 2
             SPIELEN.ausgang = Label (fenster, text = "UNENTSCHIEDEN", fg = "grey", font = "Times 15")
@@ -86,7 +86,7 @@ class SPIELEN:
                 SPIELFELD.gewinner [self.nummer] = "x"
                 #Auf Kreuz verweisen + Spielerwechsel + Nummer für Gewinncode
 
-                self.gewinncode ()
+                self.gewinncode (SPIELFELD.gewinner)
 
                 if (SPIELFELD.beendet == 1):
                     SPIELEN.ausgang = Label (fenster, text = "X HAT GEWONNEN", fg = "red", font = "Times 15")
@@ -101,7 +101,7 @@ class SPIELEN:
                 SPIELFELD.gewinner [self.nummer] = "o"
                 #Auf Kreis verweisen + Spielerwechsel + Nummer für Gewinncode
 
-                self.gewinncode ()
+                self.gewinncode (SPIELFELD.gewinner)
                 
                 if (SPIELFELD.beendet == 1):
                     SPIELEN.ausgang = Label (fenster, text = "O HAT GEWONNEN", fg = "blue", font = "Times 15")

@@ -39,10 +39,10 @@ class SPIELFELD:
         
     def neustart (self):
         self.spielfeld.delete (ALL)
-        senkrechte = self.spielfeld.create_line (100,0,100,300, width = 3)  
-        senkrechte = self.spielfeld.create_line (200,0,200,300, width = 3)  
-        waagerrechte = self.spielfeld.create_line (0,100,300,100, width = 3)
-        waagerrechte = self.spielfeld.create_line (0,200,300,200, width = 3)
+        senkrechte = self.spielfeld.create_line (100,0,100,300, width = 4)  
+        senkrechte = self.spielfeld.create_line (200,0,200,300, width = 4)  
+        waagerrechte = self.spielfeld.create_line (0,100,300,100, width = 4)
+        waagerrechte = self.spielfeld.create_line (0,200,300,200, width = 4)
         #Spielfeld Linien zeichnen + Zahlen: Anfang_x, Anfang_y, Ende_x, Ende_y
 
 #--------------------------------------------------------------------
@@ -104,13 +104,13 @@ class SPIELEN:
 
     def überprüfen (self, spieler):
         Felder = [Feld_1, Feld_2, Feld_3, Feld_4, Feld_5, Feld_6, Feld_7, Feld_8, Feld_9]
-
+        
         for i in range(0, 9):
             kopie = self.kopieren (SPIELFELD.gewinner)
             if self.platz_frei (kopie, i):
-                kopie [i] = spieler
+                kopie [i] = spieler     #Überprüft, ob auf einem der Felder ein Sieg möglich ist
                 self.gewinncode (kopie)
-                if (SPIELFELD.gewonnen == 1):
+                if (SPIELFELD.gewonnen == 1):   #Wenn Sieg mölich ist führt er aus
                     Feld = Felder [i]
                     SPIELFELD.markieren_x (Feld.x1, Feld.y1, Feld.x2, Feld.y2)
                     Feld.knopf.lower ()
@@ -125,7 +125,7 @@ class SPIELEN:
 
 #-------------------------------------------------        
 
-    def computer (self):
+    def computer (self):    #Block ist für das setzen vom Computer zuständig
         SPIELFELD.test = 1
         SPIELFELD.überprüft = 0
         
@@ -196,8 +196,8 @@ class SPIELEN:
         Felder = [Feld_1, Feld_2, Feld_3, Feld_4, Feld_5, Feld_6, Feld_7, Feld_8, Feld_9]
         for i in Felder:
             i.knopf.lift () #Knöpfe sichtbar machen
-        SPIELFELD.neustart ()
-        SPIELFELD.spieler = "x" #Wieder mit x beginnen
+        SPIELFELD.neustart ()   #Neues Spielfeld erzeugen
+        #SPIELFELD.spieler = "x" #Wieder mit x beginnen
 
         if (SPIELFELD.beendet == 1 or SPIELFELD.beendet == 2):
             SPIELEN.ausgang.destroy ()  #Label hat gewonnen, etc. verschwindet
@@ -206,6 +206,7 @@ class SPIELEN:
         SPIELFELD.gewinner = ["","","","","","","","",""]   #Gewinncode zurücksetzten
 
         global beginner
+        #Per Zufall beginner auswählen
         beginner = random.randint (1, 2)
         if (SPIELFELD.modus == 1 and beginner == 1):
             SPIELFELD.markieren_x (Feld_1.x1, Feld_1.y1, Feld_1.x2, Feld_1.y2)
@@ -225,16 +226,22 @@ class SPIELEN:
         elif (self == Beenden): #Spiel beenden
             os._exit(1)
 
-        elif (self == Einzelspieler):
-            if (SPIELFELD.modus == 2):
-                SPIELFELD.modus = 1
-                self.neustart ()
+        elif (self == Einzelspieler):   #Zu Einzelspieler wechseln
+            SPIELFELD.modus = 1
+            Einzelspieler.knopf.lower ()
+            Mehrspieler.knopf.lift ()
+            Einzelspieler_modus.lift ()
+            Mehrspieler_modus.lower ()
+            self.neustart ()
             
-        elif (self == Mehrspieler):
-            if (SPIELFELD.modus == 1):
-                SPIELFELD.modus = 2
-                SPIELFELD.spieler = "x"
-                self.neustart ()
+        elif (self == Mehrspieler):     #Zu Mehrspieler wechseln
+            SPIELFELD.modus = 2
+            Mehrspieler.knopf.lower ()
+            Einzelspieler.knopf.lift ()
+            Mehrspieler_modus.lift ()
+            Einzelspieler_modus.lower ()
+            SPIELFELD.spieler = "x"
+            self.neustart ()
                 
             
 #---------------------------------------------------------------------
@@ -291,12 +298,12 @@ class SPIELEN:
 def anleitung ():
     anfang = Tk ()
     anfang.title ("Anleitung TIC-TAC-TOE")
-    anfang.geometry ("400x200+217+275")
+    anfang.geometry ("400x240+217+275")
 
-    beschreibung = Label (anfang, text = "Dies ist ein normeles TIC-TAC-TOE Spiel.\n Dabei geht es darum, als erster Drei Symbole in einer\n Reihe zu haben. Es gibt dabei drei Möglichkeiten:\n\n 1: waagerrecht\n\n 2: senkrecht\n\n 3: diagolal")
+    beschreibung = Label (anfang, text = "Dies ist ein normeles TIC-TAC-TOE Spiel.\nDabei geht es darum, als erster Drei Symbole in einer\n Reihe zu haben.\n Dabei stehen folgende drei Möglichkeiten zur Wahl:\n\n 1: waagerrecht\n\n 2: senkrecht\n\n 3: diagolal\n\n (Im Einzelspielermodus wird per zufall bestimmt wer beginnen darf.)")
     beschreibung.pack ()
 
-    starten = Button (anfang, text = "Schließen", command = anfang.destroy)
+    starten = Button (anfang, text = "ZURÜCK", command = anfang.destroy)
     starten.pack (side = TOP, pady = 10)
 
     anfang.mainloop ()
@@ -304,7 +311,7 @@ def anleitung ():
 #---------------------------------------------------------------------
 
 fenster = Tk () #Fenster erzeugen
-fenster.title ("Tic-Tac-Toe")   #Name Fenster
+fenster.title ("TIC-TAC-TOE")   #Name Fenster
 fenster.geometry ("335x420+250+250")
 
 fenster = ttk.Frame (fenster, borderwidth = 10, padding = "5")
@@ -312,29 +319,37 @@ fenster.grid () #Größe des Fensters festlegen
 
 SPIELFELD = SPIELFELD ()    #Spielfeld aufrufen    #Fenster definieren   
 
-Feld_1 = SPIELEN ("Feld 1", 0, 96,96,3,2, 10,10,90,90)
-Feld_2 = SPIELEN ("Feld 2", 1, 96,96,103,2, 110,10,190,90)
-Feld_3 = SPIELEN ("Feld 3", 2, 96,96,203,2, 210,10,290,90)
-Feld_4 = SPIELEN ("Feld 4", 3, 96,96,3,102, 10,110,90,190)
-Feld_5 = SPIELEN ("Feld 5", 4, 96,96,103,102, 110,110,190,190)
-Feld_6 = SPIELEN ("Feld 6", 5, 96,96,203,102, 210,110,290,190)
-Feld_7 = SPIELEN ("Feld 7", 6, 96,96,3,202, 10,210,90,290)
-Feld_8 = SPIELEN ("Feld 8", 7, 96,96,103,202, 110,210,190,290)
-Feld_9 = SPIELEN ("Feld 9", 8, 96,96,203,202, 210,210,290,290)
+Feld_1 = SPIELEN ("", 0, 96,96,3,2, 10,10,90,90)
+Feld_2 = SPIELEN ("", 1, 96,96,103,2, 110,10,190,90)
+Feld_3 = SPIELEN ("", 2, 96,96,203,2, 210,10,290,90)
+Feld_4 = SPIELEN ("", 3, 96,96,3,102, 10,110,90,190)
+Feld_5 = SPIELEN ("", 4, 96,96,103,102, 110,110,190,190)
+Feld_6 = SPIELEN ("", 5, 96,96,203,102, 210,110,290,190)
+Feld_7 = SPIELEN ("", 6, 96,96,3,202, 10,210,90,290)
+Feld_8 = SPIELEN ("", 7, 96,96,103,202, 110,210,190,290)
+Feld_9 = SPIELEN ("", 8, 96,96,203,202, 210,210,290,290)
 
 #Zahlen: Feld, Nummer, Breite, Höhe, Pos_x, Pos_y, X_Anfang, Y_Anfang, X_Ende, Y_Ende 
 
-Neustart = SPIELEN ("Neustart", 9, 75,25,15,310, 0,0,0,0)   #Neustart Button
-Beenden = SPIELEN ("Beenden", 10, 75,25,210,310, 0,0,0,0)   #Beenden Button
+Neustart = SPIELEN ("NEUSTART", 9, 75,25,15,310, 0,0,0,0)   #Neustart Button
+Beenden = SPIELEN ("BEENDEN", 10, 75,25,210,310, 0,0,0,0)   #Beenden Button
 
-Anleitung = Button (fenster, text = "Anleitung", command = anleitung)
+Anleitung = Button (fenster, text = "ANLEITUNG", command = anleitung)
 Anleitung.place (x = 112, y = 310, width = 75, height = 25)
 
-Einzelspieler = SPIELEN ("Einzelspieler", 11, 75,25,55,345, 0,0,0,0)
-Mehrspieler = SPIELEN ("Mehrspieler", 12, 75,25,160,345, 0,0,0,0)
+Einzelspieler = SPIELEN ("EINZELSPIELER", 11, 100,25,197,345, 0,0,0,0)
+Mehrspieler = SPIELEN ("MEHRSPIELER", 12, 100,25,197,345, 0,0,0,0)
+
+Einzelspieler_modus = Label (fenster, text = "MODUS: EINZELSPIELER", font = "Times 12")
+Einzelspieler_modus.place (x = 15, y = 347)
+Mehrspieler_modus = Label (fenster, text = "MODUS: MEHRSPIELER", font = "Times 12")
+Mehrspieler_modus.place (x = 15, y = 347)
+#Label für Modus
+Mehrspieler.knopf.lower ()
+Einzelspieler_modus.lower ()
 
 fenster.mainloop () #Hauptschleife
 
 #---------------------------------------------------------------------
 
-os._exit (1)
+os._exit (1)    #Wenn Fenster geschlossen wird komplett beenden
